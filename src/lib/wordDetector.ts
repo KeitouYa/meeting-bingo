@@ -25,15 +25,9 @@ export function detectWords(
 
     const normWord = normalizeText(word)
 
-    if (normWord.includes(' ')) {
-      if (normTranscript.includes(normWord)) {
-        detected.push(word)
-      }
-    } else {
-      const re = new RegExp(`\\b${escapeRegex(normWord)}\\b`, 'i')
-      if (re.test(normTranscript)) {
-        detected.push(word)
-      }
+    const re = new RegExp(`\\b${escapeRegex(normWord)}\\b`, 'i')
+    if (re.test(normTranscript)) {
+      detected.push(word)
     }
   }
 
@@ -71,15 +65,10 @@ export function detectWordsWithAliases(
 
     for (const alias of aliases) {
       const normAlias = normalizeText(alias)
-      const isPhrase = normAlias.includes(' ')
       let matched = false
 
-      if (isPhrase) {
-        matched = normTranscript.includes(normAlias)
-      } else {
-        const re = new RegExp(`\\b${escapeRegex(normAlias)}\\b`, 'i')
-        matched = re.test(normTranscript)
-      }
+      const re = new RegExp(`\\b${escapeRegex(normAlias)}\\b`, 'i')
+      matched = re.test(normTranscript)
 
       if (matched) {
         detected.push(word)
