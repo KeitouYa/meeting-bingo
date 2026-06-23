@@ -4,6 +4,7 @@ import { CATEGORIES } from './data/categories'
 import { generateCard } from './lib/cardGenerator'
 import { checkForBingo, countFilled } from './lib/bingoChecker'
 import { detectWordsWithAliases } from './lib/wordDetector'
+import { buildShareText, shareResult } from './lib/shareUtils'
 import { useSpeechRecognition } from './hooks/useSpeechRecognition'
 import { LandingPage } from './components/LandingPage'
 import { CategorySelect } from './components/CategorySelect'
@@ -11,6 +12,29 @@ import { GameBoard } from './components/GameBoard'
 import { WinScreen } from './components/WinScreen'
 import { MicPermissionDialog } from './components/MicPermissionDialog'
 import { ToastContainer } from './components/ui/Toast'
+
+// ── Game state persistence (KEI-30) ──────────────────────────────────────────
+
+const STORAGE_KEY = 'mbingo-state'
+
+type PersistedState = {
+  game: Omit<GameState, 'alreadyFilled'> & { alreadyFilled: string[] }
+  screen: ScreenState
+}
+
+function loadState(): { game: GameState; screen: ScreenState } | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const { game, screen }: PersistedState = JSON.parse(raw)
+    if (!game.card) return null
+    return { game: { ...game, alreadyFilled: new Set(game.alreadyFilled) }, screen }
+  } catch {
+    return null
+  }
+}
+
+// ── Constants ────────────────────────────────────────────────────────────────
 
 const INITIAL_GAME: GameState = {
   card: null,
@@ -38,8 +62,8 @@ function makeToast(message: string, type: Toast['type']): Toast {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<ScreenState>('landing')
-  const [game, setGame] = useState<GameState>(INITIAL_GAME)
+  const [screen, setScreen] = useState<ScreenState>(() => loadState()?.screen ?? 'landing')
+  const [game, setGame] = useState<GameState>(() => loadState()?.game ?? INITIAL_GAME)
   const [toasts, setToasts] = useState<Toast[]>([])
   const [displayTranscript, setDisplayTranscript] = useState('')
   const [detectedWords, setDetectedWords] = useState<string[]>([])
@@ -289,6 +313,36 @@ export default function App() {
     setScreen('category')
   }, [stopListening])
 
+  // Persist active game state (KEI-30); clear on landing/category
+  useEffect(() => {
+    if ((screen === 'game' || screen === 'win') && game.card) {
+      try {
+        const persisted: PersistedState = {
+          game: { ...game, alreadyFilled: [...game.alreadyFilled] },
+          screen,
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted))
+      } catch {}
+    } else {
+      try { localStorage.removeItem(STORAGE_KEY) } catch {}
+    }
+  }, [game, screen])
+
+  // Share result (KEI-28)
+  const handleShare = useCallback(async () => {
+    const category = CATEGORIES.find(c => c.id === game.category)
+    if (!game.card || !category) return
+    const text = buildShareText(game, category)
+    const result = await shareResult(text)
+    if (result === 'copied') {
+      addToast('📋 Result copied to clipboard!', 'success')
+    } else if (result === 'native-shared') {
+      addToast('📤 Shared!', 'success')
+    } else {
+      addToast('Could not share — try screenshotting instead', 'info')
+    }
+  }, [game, addToast])
+
   // Transition to win screen when bingo is detected
   useEffect(() => {
     if (game.winningLines.length > 0 && screen === 'game') {
@@ -333,6 +387,7 @@ export default function App() {
           category={currentCategory}
           onPlayAgain={handlePlayAgain}
           onHome={handleHome}
+          onShare={handleShare}
         />
       )}
 

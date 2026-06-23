@@ -1,3 +1,4 @@
+import confetti from 'canvas-confetti'
 import { useEffect, useRef } from 'react'
 import type { Category, GameState } from '../types'
 import { cn } from '../lib/utils'
@@ -26,6 +27,10 @@ export function WinScreen({ game, category, onPlayAgain, onHome, onShare }: WinS
     headingRef.current?.focus()
   }, [])
 
+  useEffect(() => {
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, disableForReducedMotion: true })
+  }, [])
+
   const elapsed =
     game.startedAt && game.completedAt
       ? formatDuration(game.completedAt - game.startedAt)
@@ -34,7 +39,10 @@ export function WinScreen({ game, category, onPlayAgain, onHome, onShare }: WinS
   const filledNonFree = game.filledCount - 1
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center px-4 py-8 gap-6">
+    <main
+      className="min-h-screen bg-gray-50 flex flex-col items-center px-4 pt-8 gap-6 overflow-y-auto"
+      style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+    >
       <div className="text-center">
         <h1
           ref={headingRef}
@@ -123,7 +131,8 @@ export function WinScreen({ game, category, onPlayAgain, onHome, onShare }: WinS
           onClick={onShare ?? (() => {})}
           variant="secondary"
           className="flex-1"
-          aria-label="Share result (coming soon)"
+          aria-label="Share your result"
+          disabled={!onShare}
         >
           <span aria-hidden="true" className="mr-1.5">📤</span>
           Share Result
