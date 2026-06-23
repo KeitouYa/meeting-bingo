@@ -355,6 +355,15 @@ export default function App() {
     }
   }, [game, addToast])
 
+  const handleBackToCategory = useCallback(() => {
+    stopListening()
+    setGame(INITIAL_GAME)
+    setDisplayTranscript('')
+    setDetectedWords([])
+    finalBufferRef.current = []
+    setScreen('category')
+  }, [stopListening])
+
   const handleWin = useCallback(() => {
     setScreen('win')
   }, [])
@@ -387,6 +396,7 @@ export default function App() {
           onSquareClick={handleSquareClick}
           onToggleListening={handleToggleListening}
           onNewCard={handleNewCard}
+          onBack={handleBackToCategory}
           onWin={handleWin}
         />
       )}

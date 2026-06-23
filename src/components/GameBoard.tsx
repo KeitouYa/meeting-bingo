@@ -18,6 +18,7 @@ interface GameBoardProps {
   onSquareClick: (square: BingoSquare) => void
   onToggleListening: () => void
   onNewCard: () => void
+  onBack: () => void
   onWin: () => void
 }
 
@@ -33,6 +34,7 @@ export function GameBoard({
   onSquareClick,
   onToggleListening,
   onNewCard,
+  onBack,
   onWin,
 }: GameBoardProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -140,6 +142,7 @@ export function GameBoard({
           isSupported={isSupported}
           onNewCard={onNewCard}
           onToggleListening={onToggleListening}
+          onBack={onBack}
         />
       </div>
     </main>
