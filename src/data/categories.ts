@@ -57,4 +57,26 @@ export const CATEGORIES: Category[] = [
       'branch', 'release', 'rollback', 'feature flag', 'A/B test',
     ],
   },
+  {
+    id: 'sports',
+    name: 'Sports Commentary',
+    icon: '🏒',
+    description: 'Buzzwords from the broadcast booth — with a little teal thrown in',
+    words: [
+      // Broadcast-booth staples
+      'momentum shift', 'power play', 'hat trick', 'shutout', 'overtime',
+      'penalty kill', 'breakaway', 'top shelf', 'five-hole', 'puck luck',
+      'forecheck', 'board battle', 'cycle the puck', 'high danger', 'traffic in front',
+      'give 110%', 'heart of a champion', 'leave it all on the ice', 'grind it out',
+      'take it one game at a time', 'physical play', 'capitalize', 'buzzer beater',
+      'power move', 'on the road', 'home ice advantage', 'must-win game',
+      'gut check', 'battle tested', 'playoff hockey', 'clutch performance',
+      'momentum swings', 'empty netter', 'two-man advantage', 'face-off',
+      'delayed penalty', 'icing call', 'offsides', 'goalie interference',
+      // San Jose Sharks flavour
+      'Shark Tank', 'teal', 'Fear the Fin', 'SAP Center', 'Jumbo Joe',
+      'Logan Couture', 'Brent Burns', 'SJ faithful', 'teal and black',
+      'Pacific Division',
+    ],
+  },
 ]
