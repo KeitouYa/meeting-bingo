@@ -35,9 +35,10 @@ export interface WinningLine {
 }
 
 export interface ClosestToWin {
-  needed: number    // unfilled squares on the closest line(s)
-  lines: string[]   // e.g. ['Row 1', 'Column 3'] for ties
-  words: string[]   // completing word(s) across all tied lines — drives "Need: X or Y"
+  needed: number      // unfilled squares on the closest line(s)
+  lines: string[]     // e.g. ['Row 1', 'Column 3'] for ties
+  words: string[]     // completing word(s) across all tied lines — drives "Need: X or Y"
+  squareIds: string[] // all square IDs on the closest line(s) — for near-bingo highlight
 }
 
 export interface GameState {

@@ -70,8 +70,10 @@ export function getClosestToWin(squares: BingoSquare[][]): ClosestToWin | null {
 
   const lineNames = tiedLines.map(l => l.label)
   const wordSet = new Set<string>()
+  const idSet = new Set<string>()
   for (const line of tiedLines) {
     for (const sq of line.squares) {
+      idSet.add(sq.id)
       if (!sq.isFilled) wordSet.add(sq.word)
     }
   }
@@ -80,5 +82,6 @@ export function getClosestToWin(squares: BingoSquare[][]): ClosestToWin | null {
     needed: minNeeded,
     lines: lineNames,
     words: [...wordSet],
+    squareIds: [...idSet],
   }
 }

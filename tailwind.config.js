@@ -3,6 +3,23 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      animation: {
+        'fill-once': 'fillPulse 0.5s ease-out 1 both',
+        'bounce-in': 'bounceIn 0.4s ease-out 1 both',
+      },
+      keyframes: {
+        fillPulse: {
+          '0%':   { transform: 'scale(1)' },
+          '40%':  { transform: 'scale(1.1)' },
+          '75%':  { transform: 'scale(0.95)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        bounceIn: {
+          '0%':   { transform: 'scale(0.8)', opacity: '0' },
+          '60%':  { transform: 'scale(1.05)' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
       colors: {
         // PRD §6.6 design tokens — single source of truth for all components
         square: {
