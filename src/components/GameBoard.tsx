@@ -18,6 +18,7 @@ interface GameBoardProps {
   onSquareClick: (square: BingoSquare) => void
   onToggleListening: () => void
   onNewCard: () => void
+  onWin: () => void
 }
 
 export function GameBoard({
@@ -32,12 +33,17 @@ export function GameBoard({
   onSquareClick,
   onToggleListening,
   onNewCard,
+  onWin,
 }: GameBoardProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
     headingRef.current?.focus()
   }, [])
+
+  useEffect(() => {
+    if (game.winningLines.length > 0) onWin()
+  }, [game.winningLines.length, onWin])
 
   const category = CATEGORIES.find(c => c.id === game.category)
   const filledNonFree = game.filledCount - 1

@@ -117,6 +117,7 @@ export function useSpeechRecognition({
     intendedRef.current = true
     restartCountRef.current = 0
     setError(null)
+    setPermissionDenied(false)
     try {
       recognitionRef.current.start()
     } catch {

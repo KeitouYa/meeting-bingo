@@ -36,6 +36,9 @@ function loadState(): { game: GameState; screen: ScreenState } | null {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
+// Single loadState() call; both useState initializers read from this snapshot.
+const _LOADED_STATE = loadState()
+
 const INITIAL_GAME: GameState = {
   card: null,
   category: null,
@@ -53,6 +56,7 @@ function freshGame(category: Category): GameState {
     card: generateCard(category),
     category: category.id,
     filledCount: 1,  // FREE space
+    alreadyFilled: new Set<string>(),
   }
 }
 
@@ -62,8 +66,8 @@ function makeToast(message: string, type: Toast['type']): Toast {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<ScreenState>(() => loadState()?.screen ?? 'landing')
-  const [game, setGame] = useState<GameState>(() => loadState()?.game ?? INITIAL_GAME)
+  const [screen, setScreen] = useState<ScreenState>(_LOADED_STATE?.screen ?? 'landing')
+  const [game, setGame] = useState<GameState>(_LOADED_STATE?.game ?? INITIAL_GAME)
   const [toasts, setToasts] = useState<Toast[]>([])
   const [displayTranscript, setDisplayTranscript] = useState('')
   const [detectedWords, setDetectedWords] = useState<string[]>([])
@@ -103,7 +107,11 @@ export default function App() {
       if (!prev.card || prev.winningLines.length > 0) return prev
 
       const startedAt = prev.startedAt ?? Date.now()
-      const nowFilled = !square.isFilled
+      // Read isFilled from prev state, not from the closed-over argument, so
+      // rapid double-clicks compute the correct toggle direction.
+      const prevSquare = prev.card.squares.flat().find(sq => sq.id === square.id)
+      if (!prevSquare) return prev
+      const nowFilled = !prevSquare.isFilled
 
       const newSquares = prev.card.squares.map(row =>
         row.map(sq =>
@@ -191,6 +199,10 @@ export default function App() {
           break
         }
       }
+
+      // Seal every word in the batch so subsequent speech chunks don't re-detect
+      // words that arrived after the winning fill (the break skips their add above).
+      for (const word of words) newAlreadyFilled.add(word.toLowerCase())
 
       return {
         ...prev,
@@ -343,12 +355,9 @@ export default function App() {
     }
   }, [game, addToast])
 
-  // Transition to win screen when bingo is detected
-  useEffect(() => {
-    if (game.winningLines.length > 0 && screen === 'game') {
-      setScreen('win')
-    }
-  }, [game.winningLines.length, screen])
+  const handleWin = useCallback(() => {
+    setScreen('win')
+  }, [])
 
   const currentCategory = CATEGORIES.find(c => c.id === game.category)
 
@@ -378,6 +387,7 @@ export default function App() {
           onSquareClick={handleSquareClick}
           onToggleListening={handleToggleListening}
           onNewCard={handleNewCard}
+          onWin={handleWin}
         />
       )}
 

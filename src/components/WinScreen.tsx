@@ -1,6 +1,7 @@
 import confetti from 'canvas-confetti'
 import { useEffect, useRef } from 'react'
 import type { Category, GameState } from '../types'
+import { formatDuration } from '../lib/shareUtils'
 import { cn } from '../lib/utils'
 import { Button } from './ui/Button'
 
@@ -10,14 +11,6 @@ interface WinScreenProps {
   onPlayAgain: () => void
   onHome: () => void
   onShare?: () => void
-}
-
-function formatDuration(ms: number): string {
-  const s = Math.floor(ms / 1000)
-  const m = Math.floor(s / 60)
-  const sec = s % 60
-  if (m === 0) return `${sec}s`
-  return `${m}m ${sec}s`
 }
 
 export function WinScreen({ game, category, onPlayAgain, onHome, onShare }: WinScreenProps) {
