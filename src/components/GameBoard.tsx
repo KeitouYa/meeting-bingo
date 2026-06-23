@@ -4,11 +4,17 @@ import { CATEGORIES } from '../data/categories'
 import { getClosestToWin } from '../lib/bingoChecker'
 import { BingoCard } from './BingoCard'
 import { GameControls } from './GameControls'
+import { TranscriptPanel } from './TranscriptPanel'
 
 interface GameBoardProps {
   game: GameState
   isListening: boolean
   isSupported: boolean
+  transcript: string
+  interimTranscript: string
+  detectedWords: string[]
+  error: string | null
+  permissionDenied: boolean
   onSquareClick: (square: BingoSquare) => void
   onToggleListening: () => void
   onNewCard: () => void
@@ -18,6 +24,11 @@ export function GameBoard({
   game,
   isListening,
   isSupported,
+  transcript,
+  interimTranscript,
+  detectedWords,
+  error,
+  permissionDenied,
   onSquareClick,
   onToggleListening,
   onNewCard,
@@ -29,7 +40,7 @@ export function GameBoard({
   }, [])
 
   const category = CATEGORIES.find(c => c.id === game.category)
-  const filledNonFree = game.filledCount - 1  // exclude FREE space
+  const filledNonFree = game.filledCount - 1
 
   const closest = useMemo(
     () => game.card ? getClosestToWin(game.card.squares) : null,
@@ -67,7 +78,7 @@ export function GameBoard({
           <span className="font-semibold tabular-nums">
             {filledNonFree}<span className="text-gray-400">/24</span>
           </span>
-          {/* Listening indicator — non-red per plan (supersedes bg-red-500 sample) */}
+          {/* Non-red listening indicator (supersedes architecture's bg-red-500 sample) */}
           <span
             aria-live="polite"
             aria-label={isListening ? 'Listening, not recording' : 'Not listening'}
@@ -97,7 +108,7 @@ export function GameBoard({
         </div>
       )}
 
-      {/* Card */}
+      {/* Card + controls */}
       <div className="flex-1 flex flex-col items-center px-3 py-4 gap-4 max-w-lg mx-auto w-full">
         {game.card && (
           <BingoCard
@@ -107,19 +118,23 @@ export function GameBoard({
           />
         )}
 
+        {/* TranscriptPanel — hidden automatically when !isSupported */}
+        <TranscriptPanel
+          transcript={transcript}
+          interimTranscript={interimTranscript}
+          detectedWords={detectedWords}
+          isListening={isListening}
+          isSupported={isSupported}
+          error={error}
+          permissionDenied={permissionDenied}
+        />
+
         <GameControls
           isListening={isListening}
           isSupported={isSupported}
           onNewCard={onNewCard}
           onToggleListening={onToggleListening}
         />
-
-        {isListening && (
-          <p className="text-xs text-gray-400 text-center">
-            <span aria-hidden="true">💡</span>{' '}
-            Hold your device near the speaker. Headphones may reduce detection.
-          </p>
-        )}
       </div>
     </main>
   )
