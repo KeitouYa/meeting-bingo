@@ -79,4 +79,23 @@ export const CATEGORIES: Category[] = [
       'Pacific Division',
     ],
   },
+  {
+    id: 'movie',
+    name: 'Movie Night',
+    icon: '🎬',
+    description: 'Classic film tropes and clichés for movie night',
+    words: [
+      'plot twist', 'flashback', 'MacGuffin', 'foreshadowing', 'cliffhanger',
+      'chosen one', 'anti-hero', 'mentor', 'comic relief', 'love interest',
+      'training montage', 'redemption arc', 'origin story', "hero's journey",
+      'third act breakdown', 'villain monologue', 'slow motion', 'post-credits scene',
+      'jump scare', 'sequel bait', 'fake death', 'betrayal', 'sacrifice',
+      'against all odds', 'power of friendship', 'unlikely hero', 'underdog',
+      'team assembles', 'mask off', 'ticking clock', 'deus ex machina',
+      'speech before battle', 'dramatic irony', 'twist ending', 'final boss',
+      'romantic subplot', 'it was a dream', 'breaking the fourth wall',
+      'one last job', 'noble sacrifice', 'chosen destiny', 'unlikely alliance',
+      'last minute rescue', 'dark secret revealed', 'surprise villain',
+    ],
+  },
 ]
