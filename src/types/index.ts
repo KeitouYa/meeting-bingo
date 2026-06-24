@@ -1,6 +1,6 @@
 export type ScreenState = 'landing' | 'category' | 'game' | 'win'
 
-export type CategoryId = 'agile' | 'corporate' | 'tech' | 'sports'
+export type CategoryId = 'agile' | 'corporate' | 'tech' | 'sports' | 'movie'
 
 export interface Category {
   id: CategoryId
